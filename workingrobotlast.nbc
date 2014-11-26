@@ -1,0 +1,105 @@
+/*
+   Collaborators: Derek Miner, Magdalene Benson
+   Class:         Computer Systems CS 375, WSU-R F2014
+   Date:          11/23/2014
+   Assignemnt:    NXT Robot Final Project
+
+*/
+#define SPEED      70
+#define MOVE_TIME  1000
+#define THRESHOLD   65
+#define mtrspeed    45
+#define mtrspeed2   25
+#define ultra       70
+
+
+dseg segment
+  Switch sword 0
+  Sound sword 0
+  Level sword 0
+  Distance sword 50
+  MyFile byte[] 'at.rmd'
+dseg ends
+
+
+thread main
+
+precedes sense_touch
+endt
+
+thread sense_touch
+
+  SetSensorTouch(IN_1)    // touch sensor connected to IN_1
+  SetSensorSound(IN_4)    // sound sensor connected to IN_2
+  OnFwd(OUT_BC,SPEED)     // move forward
+
+  CheckSensor:
+    ReadSensor(IN_4, Sound)
+    brcmp GT, LightOn, Sound, 50
+    ReadSensor(IN_1,Switch)       // reads current value of sensor (0/1)
+    brtst EQ, CheckSensor, Switch // branch to CheckSensor if Switch = 0
+                                  // i.e., exit the loop when Switch = 1
+
+
+  OnRev(OUT_BC,SPEED)      // move backward
+  wait MOVE_TIME
+  OnFwd(OUT_B,SPEED)       // turn
+  wait MOVE_TIME
+  OnFwd(OUT_BC,SPEED)      // move forward
+  jmp CheckSensor          // loop to CheckSensor
+  
+ LightOn:
+ precedes sense_clap, sense_ultra
+
+endt
+
+
+
+
+
+thread sense_clap
+SetSensorType(IN_3, IN_TYPE_SOUND_DB)
+SetSensorMode(IN_3, IN_MODE_PERIODCOUNTER)
+ResetSensor(IN_3)
+
+//Light Sensor #3 Start
+ SetSensorLight(IN_3)
+ OnFwd(OUT_BC,mtrspeed)
+CheckSensor:
+ ReadSensor(IN_3,Level)
+ brcmp LT, CheckSensor, Level, THRESHOLD
+ OnRev(OUT_B,mtrspeed)
+ OnFwd(OUT_C,mtrspeed2)
+FindLine:
+ ReadSensor(IN_3,Level)
+ brcmp GTEQ, FindLine, Level, THRESHOLD
+ OnFwd(OUT_BC,mtrspeed)
+ jmp CheckSensor
+endt
+
+thread sense_ultra
+
+  SetSensorUltrasonic(IN_2)
+  OnFwd(OUT_BC,100)
+  wait 2000
+
+Forever:
+  ReadSensorUS(IN_2, Distance)
+  brcmp GT, StopIt, Distance, 0
+  Off(OUT_B)
+  wait 500
+  OnFwd(OUT_BC,100)
+  jmp Forever
+StopIt:
+   Off(OUT_BC)
+   wait 1000
+   OnRev(OUT_B,mtrspeed)
+   OnFwd(OUT_C,mtrspeed2)
+   wait 500
+   OnFwd(OUT_BC,SPEED)
+   wait 500
+   Off(OUT_BC)
+   PlayFile(MyFile)
+   wait 10000
+   
+endt

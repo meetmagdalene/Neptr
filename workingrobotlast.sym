@@ -1,0 +1,271 @@
+#SYMBOLS
+Index	Identifier	Type	Flag	Data	Size	RefCount
+0	__CLSWMutex1	9	0	0	4	2
+1	__ResetSensorMutex	9	0	4	4	10
+2	__CLSCSMutex1	9	0	8	4	2
+3	__CLSRMutex1	9	0	12	4	2
+4	__PlayFileMutex	9	0	16	4	2
+5	__RLSBmutex1	9	0	20	4	2
+6	__OnRevMutex	9	0	24	4	6
+7	Level	4	1	28	2	4
+8	Sound	4	1	30	2	2
+9	__constVal128	4	0	32	2	2
+10	Switch	4	1	34	2	2
+11	Distance	4	0	36	2	2
+12	__constVal2000	4	0	38	2	1
+13	__constVal500	4	0	40	2	3
+14	__constVal10000	4	0	42	2	1
+15	__constVal1000	4	0	44	2	3
+16	__constVal63	2	0	46	1	16
+17	__PFTmp	1	1	47	1	1
+18	__constVal2	2	0	48	1	10
+19	__constVal96	2	0	49	1	17
+20	__constVal100	2	0	50	1	2
+21	__constVal11	2	0	51	1	1
+22	__constVal65	2	0	52	1	2
+23	__constVal45	2	0	53	1	4
+24	__constVal25	2	0	54	1	2
+25	__constVal7	2	0	55	1	2
+26	__constVal70	2	0	56	1	5
+27	__RLSBIterations1	1	1	57	1	4
+28	__constVal5	2	0	58	1	1
+29	__constVal4	2	0	59	1	1
+30	__ResetSensorPort	1	1	60	1	7
+31	____ResetSensorSubroutine_return	1	1	61	1	7
+32	__ResetSensorTmp	1	1	62	1	2
+33	__constVal3	2	0	63	1	20
+34	__constVal32	2	0	64	1	49
+35	__OnRev_Tmp	2	1	65	1	6
+36	__constVal1	2	0	66	1	10
+37	__constVal50	2	0	67	1	1
+38	__constVal0	2	1	68	1	59
+39	____ReadLSBytes1_return	1	1	69	1	3
+40	__constVal15	2	0	70	1	3
+41	__RLSBytesCount1	1	1	71	1	7
+42	__RLSBResult1	2	1	72	1	7
+43	__CLSWArgs1	8	0	4	12	5
+44	__CLSWArgs1.Result	2	1	76	1	5
+45	__CLSWArgs1.Port	1	1	77	1	5
+46	__CLSWArgs1.Buffer	7	0	78	4	5
+47	__CLSWArgs1.Buffer.Buffer_type	1	0	0	1	0
+48	__CLSWArgs1.ReturnLen	1	1	80	1	5
+49	__PlayFileTmp	8	0	4	12	4
+50	__PlayFileTmp.Result	2	1	84	1	4
+51	__PlayFileTmp.Filename	7	0	86	4	4
+52	__PlayFileTmp.Filename.Filename_type	1	0	0	1	0
+53	__PlayFileTmp.Loop	1	1	88	1	4
+54	__PlayFileTmp.Volume	1	1	89	1	4
+55	__CLSCSArgs1	8	0	3	4	4
+56	__CLSCSArgs1.Result	2	1	92	1	4
+57	__CLSCSArgs1.Port	1	1	93	1	4
+58	__CLSCSArgs1.BytesReady	1	1	94	1	4
+59	__CLSRArgs1	8	0	4	12	5
+60	__CLSRArgs1.Result	2	1	96	1	5
+61	__CLSRArgs1.Port	1	1	97	1	5
+62	__CLSRArgs1.Buffer	7	0	98	4	5
+63	__CLSRArgs1.Buffer.Buffer_type	1	0	0	1	0
+64	__CLSRArgs1.BufferLen	1	1	100	1	5
+65	__RLSReadBuf1	7	0	102	4	8
+66	__RLSReadBuf1.__RLSReadBuf1_type	1	0	0	1	0
+67	__OUT_BC	7	0	104	4	10
+68	__OUT_BC.__OUT_BC_type	1	0	0	1	0
+69	__RLSBbufLSWrite1	7	0	106	4	1
+70	__RLSBbufLSWrite1.__RLSBbufLSWrite1_type	1	0	0	1	0
+71	__RLSLastGoodRead1	7	0	108	4	2
+72	__RLSLastGoodRead1.__RLSLastGoodRead1_type	1	0	0	1	0
+73	MyFile	7	0	110	4	1
+74	MyFile.MyFile_type	1	0	0	1	0
+#SOURCES
+Clump	Line	PC	Source
+0	28	0		exit 0, 0
+1	4885	0		setin __constVal1, __ResetSensorPort, 5
+1	4887	4		getin __ResetSensorTmp, __ResetSensorPort, 5
+1	4888	8		brtst 5, __SensorStillInvalid, __ResetSensorTmp
+1	4889	11		subret ____ResetSensorSubroutine_return
+2	5710	0	#pragma macro 25
+2	5710	0		acquire __CLSWMutex1
+2	5710	1		set __CLSWArgs1.Port, 1
+2	5710	4		mov __CLSWArgs1.ReturnLen, __RLSBytesCount1
+2	5710	6		mov __CLSWArgs1.Buffer, __RLSReadBuf1
+2	5710	8		syscall 21, __CLSWArgs1
+2	5710	11		mov __RLSBResult1, __CLSWArgs1.Result
+2	5710	13		release __CLSWMutex1
+2	5710	14	#line 5710 "NXTDefs.h"
+2	5711	14		brtst 4, __RLSBReturn1, __RLSBytesCount1
+2	5712	17		arrinit __RLSReadBuf1, __constVal0, __RLSBytesCount1
+2	5713	21		brtst 5, __RLSBError1, __RLSBResult1
+2	5714	24		set __RLSBIterations1, 4
+2	5716	27	#pragma macro 23
+2	5716	27		acquire __CLSCSMutex1
+2	5716	28		set __CLSCSArgs1.Port, 1
+2	5716	31		syscall 23, __CLSCSArgs1
+2	5716	34		mov __RLSBytesCount1, __CLSCSArgs1.BytesReady
+2	5716	36		mov __RLSBResult1, __CLSCSArgs1.Result
+2	5716	38		release __CLSCSMutex1
+2	5716	39	#line 5716 "NXTDefs.h"
+2	5717	39		sub __RLSBIterations1, __RLSBIterations1, __constVal1
+2	5718	43		brtst 2, __RLSBError1, __RLSBIterations1
+2	5719	46		brtst 0, __RLSBError1, __RLSBResult1
+2	5720	49		brtst 4, __RLSBReadyToRead1, __RLSBResult1
+2	5722	52		wait2 NA, __constVal15
+2	5723	55		jmp __RLSBDoCheckStatus1
+2	5726	57	#pragma macro 25
+2	5726	57		acquire __CLSRMutex1
+2	5726	58		set __CLSRArgs1.Port, 1
+2	5726	61		mov __CLSRArgs1.BufferLen, __RLSBytesCount1
+2	5726	63		syscall 22, __CLSRArgs1
+2	5726	66		mov __RLSReadBuf1, __CLSRArgs1.Buffer
+2	5726	68		mov __RLSBResult1, __CLSRArgs1.Result
+2	5726	70		release __CLSRMutex1
+2	5726	71	#line 5726 "NXTDefs.h"
+2	5727	71		brtst 5, __RLSBError1, __RLSBResult1
+2	5728	74		mov __RLSLastGoodRead1, __RLSReadBuf1
+2	5729	76		jmp __RLSBDone1
+2	5731	78		mov __RLSReadBuf1, __RLSLastGoodRead1
+2	5733	80		arrsize __RLSBytesCount1, __RLSReadBuf1
+2	5735	83		subret ____ReadLSBytes1_return
+3	32	0	#pragma macro 6
+3	32	0		setin __constVal1, __constVal0, 0
+3	32	4		setin __constVal32, __constVal0, 1
+3	32	8		acquire __ResetSensorMutex
+3	32	9		mov __ResetSensorPort, __constVal0
+3	32	11		subcall __ResetSensorSubroutine, ____ResetSensorSubroutine_return
+3	32	13		release __ResetSensorMutex
+3	32	14	#line 32 "C:\Users\DEREKM~1\AppData\Local\Temp\temp.nbc"
+3	33	14	#pragma macro 6
+3	33	14		setin __constVal7, __constVal3, 0
+3	33	18		setin __constVal128, __constVal3, 1
+3	33	22		acquire __ResetSensorMutex
+3	33	23		mov __ResetSensorPort, __constVal3
+3	33	25		subcall __ResetSensorSubroutine, ____ResetSensorSubroutine_return
+3	33	27		release __ResetSensorMutex
+3	33	28	#line 33 "C:\Users\DEREKM~1\AppData\Local\Temp\temp.nbc"
+3	34	28	#pragma macro 7
+3	34	28		setout __OUT_BC, 2, __constVal70, 1, __constVal3, 8, __constVal0, 6, __constVal32, 7, __constVal0, 5, __constVal0, 10, __constVal96, 11, __constVal32, 12, __constVal32, 0, __constVal63
+3	34	51	#line 34 "C:\Users\DEREKM~1\AppData\Local\Temp\temp.nbc"
+3	37	51		getin Sound, __constVal3, 4
+3	38	55		brcmp 1, LightOn, Sound, __constVal50
+3	39	59		getin Switch, __constVal0, 4
+3	40	63		brtst 4, CheckSensor, Switch
+3	44	66	#pragma macro 10
+3	44	66		acquire __OnRevMutex
+3	44	67		neg __OnRev_Tmp, __constVal70
+3	44	70		setout __OUT_BC, 2, __OnRev_Tmp, 1, __constVal3, 8, __constVal0, 6, __constVal32, 7, __constVal0, 5, __constVal0, 10, __constVal96, 11, __constVal32, 12, __constVal32, 0, __constVal63
+3	44	93		release __OnRevMutex
+3	44	94	#line 44 "C:\Users\DEREKM~1\AppData\Local\Temp\temp.nbc"
+3	45	94		wait2 NA, __constVal1000
+3	46	97	#pragma macro 7
+3	46	97		setout __constVal1, 2, __constVal70, 1, __constVal3, 8, __constVal0, 6, __constVal32, 7, __constVal0, 5, __constVal0, 10, __constVal96, 11, __constVal32, 12, __constVal32, 0, __constVal63
+3	46	120	#line 46 "C:\Users\DEREKM~1\AppData\Local\Temp\temp.nbc"
+3	47	120		wait2 NA, __constVal1000
+3	48	123	#pragma macro 7
+3	48	123		setout __OUT_BC, 2, __constVal70, 1, __constVal3, 8, __constVal0, 6, __constVal32, 7, __constVal0, 5, __constVal0, 10, __constVal96, 11, __constVal32, 12, __constVal32, 0, __constVal63
+3	48	146	#line 48 "C:\Users\DEREKM~1\AppData\Local\Temp\temp.nbc"
+3	49	146		jmp CheckSensor
+3	54	148		exit 0, 1
+4	61	0		setin __constVal7, __constVal2, 0
+4	62	4		setin __constVal96, __constVal2, 1
+4	63	8	#pragma macro 4
+4	63	8		acquire __ResetSensorMutex
+4	63	9		mov __ResetSensorPort, __constVal2
+4	63	11		subcall __ResetSensorSubroutine, ____ResetSensorSubroutine_return
+4	63	13		release __ResetSensorMutex
+4	63	14	#line 63 "C:\Users\DEREKM~1\AppData\Local\Temp\temp.nbc"
+4	66	14	#pragma macro 6
+4	66	14		setin __constVal5, __constVal2, 0
+4	66	18		setin __constVal128, __constVal2, 1
+4	66	22		acquire __ResetSensorMutex
+4	66	23		mov __ResetSensorPort, __constVal2
+4	66	25		subcall __ResetSensorSubroutine, ____ResetSensorSubroutine_return
+4	66	27		release __ResetSensorMutex
+4	66	28	#line 66 "C:\Users\DEREKM~1\AppData\Local\Temp\temp.nbc"
+4	67	28	#pragma macro 7
+4	67	28		setout __OUT_BC, 2, __constVal45, 1, __constVal3, 8, __constVal0, 6, __constVal32, 7, __constVal0, 5, __constVal0, 10, __constVal96, 11, __constVal32, 12, __constVal32, 0, __constVal63
+4	67	51	#line 67 "C:\Users\DEREKM~1\AppData\Local\Temp\temp.nbc"
+4	69	51		getin Level, __constVal2, 4
+4	70	55		brcmp 0, CheckSensor, Level, __constVal65
+4	71	59	#pragma macro 10
+4	71	59		acquire __OnRevMutex
+4	71	60		neg __OnRev_Tmp, __constVal45
+4	71	63		setout __constVal1, 2, __OnRev_Tmp, 1, __constVal3, 8, __constVal0, 6, __constVal32, 7, __constVal0, 5, __constVal0, 10, __constVal96, 11, __constVal32, 12, __constVal32, 0, __constVal63
+4	71	86		release __OnRevMutex
+4	71	87	#line 71 "C:\Users\DEREKM~1\AppData\Local\Temp\temp.nbc"
+4	72	87	#pragma macro 7
+4	72	87		setout __constVal2, 2, __constVal25, 1, __constVal3, 8, __constVal0, 6, __constVal32, 7, __constVal0, 5, __constVal0, 10, __constVal96, 11, __constVal32, 12, __constVal32, 0, __constVal63
+4	72	110	#line 72 "C:\Users\DEREKM~1\AppData\Local\Temp\temp.nbc"
+4	74	110		getin Level, __constVal2, 4
+4	75	114		brcmp 3, FindLine, Level, __constVal65
+4	76	118	#pragma macro 7
+4	76	118		setout __OUT_BC, 2, __constVal45, 1, __constVal3, 8, __constVal0, 6, __constVal32, 7, __constVal0, 5, __constVal0, 10, __constVal96, 11, __constVal32, 12, __constVal32, 0, __constVal63
+4	76	141	#line 76 "C:\Users\DEREKM~1\AppData\Local\Temp\temp.nbc"
+4	77	141		jmp CheckSensor
+4	78	143		exit -1, -1
+5	82	0	#pragma macro 6
+5	82	0		setin __constVal11, __constVal1, 0
+5	82	4		setin __constVal0, __constVal1, 1
+5	82	8		acquire __ResetSensorMutex
+5	82	9		mov __ResetSensorPort, __constVal1
+5	82	11		subcall __ResetSensorSubroutine, ____ResetSensorSubroutine_return
+5	82	13		release __ResetSensorMutex
+5	82	14	#line 82 "C:\Users\DEREKM~1\AppData\Local\Temp\temp.nbc"
+5	83	14	#pragma macro 7
+5	83	14		setout __OUT_BC, 2, __constVal100, 1, __constVal3, 8, __constVal0, 6, __constVal32, 7, __constVal0, 5, __constVal0, 10, __constVal96, 11, __constVal32, 12, __constVal32, 0, __constVal63
+5	83	37	#line 83 "C:\Users\DEREKM~1\AppData\Local\Temp\temp.nbc"
+5	84	37		wait2 NA, __constVal2000
+5	87	40	#pragma macro 26
+5	87	40		acquire __RLSBmutex1
+5	87	41		mov __RLSReadBuf1, __RLSBbufLSWrite1
+5	87	43		set __RLSBytesCount1, 1
+5	87	46		wait2 NA, __constVal15
+5	87	49		subcall __ReadLSBytes1, ____ReadLSBytes1_return
+5	87	51		index Distance, __RLSReadBuf1, 65535
+5	87	55		release __RLSBmutex1
+5	87	56	#line 87 "C:\Users\DEREKM~1\AppData\Local\Temp\temp.nbc"
+5	88	56		brcmp 1, StopIt, Distance, __constVal0
+5	89	60	#pragma macro 7
+5	89	60		setout __constVal1, 2, __constVal0, 1, __constVal3, 8, __constVal0, 6, __constVal32, 7, __constVal0, 5, __constVal0, 10, __constVal96, 11, __constVal32, 12, __constVal32, 0, __constVal63
+5	89	83	#line 89 "C:\Users\DEREKM~1\AppData\Local\Temp\temp.nbc"
+5	90	83		wait2 NA, __constVal500
+5	91	86	#pragma macro 7
+5	91	86		setout __OUT_BC, 2, __constVal100, 1, __constVal3, 8, __constVal0, 6, __constVal32, 7, __constVal0, 5, __constVal0, 10, __constVal96, 11, __constVal32, 12, __constVal32, 0, __constVal63
+5	91	109	#line 91 "C:\Users\DEREKM~1\AppData\Local\Temp\temp.nbc"
+5	92	109		jmp Forever
+5	94	111	#pragma macro 7
+5	94	111		setout __OUT_BC, 2, __constVal0, 1, __constVal3, 8, __constVal0, 6, __constVal32, 7, __constVal0, 5, __constVal0, 10, __constVal96, 11, __constVal32, 12, __constVal32, 0, __constVal63
+5	94	134	#line 94 "C:\Users\DEREKM~1\AppData\Local\Temp\temp.nbc"
+5	95	134		wait2 NA, __constVal1000
+5	96	137	#pragma macro 10
+5	96	137		acquire __OnRevMutex
+5	96	138		neg __OnRev_Tmp, __constVal45
+5	96	141		setout __constVal1, 2, __OnRev_Tmp, 1, __constVal3, 8, __constVal0, 6, __constVal32, 7, __constVal0, 5, __constVal0, 10, __constVal96, 11, __constVal32, 12, __constVal32, 0, __constVal63
+5	96	164		release __OnRevMutex
+5	96	165	#line 96 "C:\Users\DEREKM~1\AppData\Local\Temp\temp.nbc"
+5	97	165	#pragma macro 7
+5	97	165		setout __constVal2, 2, __constVal25, 1, __constVal3, 8, __constVal0, 6, __constVal32, 7, __constVal0, 5, __constVal0, 10, __constVal96, 11, __constVal32, 12, __constVal32, 0, __constVal63
+5	97	188	#line 97 "C:\Users\DEREKM~1\AppData\Local\Temp\temp.nbc"
+5	98	188		wait2 NA, __constVal500
+5	99	191	#pragma macro 7
+5	99	191		setout __OUT_BC, 2, __constVal70, 1, __constVal3, 8, __constVal0, 6, __constVal32, 7, __constVal0, 5, __constVal0, 10, __constVal96, 11, __constVal32, 12, __constVal32, 0, __constVal63
+5	99	214	#line 99 "C:\Users\DEREKM~1\AppData\Local\Temp\temp.nbc"
+5	100	214		wait2 NA, __constVal500
+5	101	217	#pragma macro 7
+5	101	217		setout __OUT_BC, 2, __constVal0, 1, __constVal3, 8, __constVal0, 6, __constVal32, 7, __constVal0, 5, __constVal0, 10, __constVal96, 11, __constVal32, 12, __constVal32, 0, __constVal63
+5	101	240	#line 101 "C:\Users\DEREKM~1\AppData\Local\Temp\temp.nbc"
+5	102	240	#pragma macro 6
+5	102	240		acquire __PlayFileMutex
+5	102	241		mov __PlayFileTmp.Filename, MyFile
+5	102	243		mov __PlayFileTmp.Volume, __constVal4
+5	102	245		mov __PlayFileTmp.Loop, __constVal0
+5	102	247		syscall 9, __PlayFileTmp
+5	102	250		release __PlayFileMutex
+5	102	251	#line 102 "C:\Users\DEREKM~1\AppData\Local\Temp\temp.nbc"
+5	103	251		wait2 NA, __constVal10000
+5	105	254		exit -1, -1
+#CLUMPS
+Clump	Name	Offset	File
+0	main	0	C:\Users\DEREKM~1\AppData\Local\Temp\temp.nbc
+1	__ResetSensorSubroutine	3	NXTDefs.h
+2	__ReadLSBytes1	16	NXTDefs.h
+3	sense_touch	101	C:\Users\DEREKM~1\AppData\Local\Temp\temp.nbc
+4	sense_clap	252	C:\Users\DEREKM~1\AppData\Local\Temp\temp.nbc
+5	sense_ultra	398	C:\Users\DEREKM~1\AppData\Local\Temp\temp.nbc
