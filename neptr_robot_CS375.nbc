@@ -1,0 +1,137 @@
+/*
+   Collaborators: Derek Miner, Magdalene Benson
+   Class:         Computer Systems CS 375, WSU-R F2014
+   Date:          11/23/2014
+   Assignemnt:    NXT Robot Final Project
+
+*/
+
+dseg segment
+  Switch sword 0
+  Distance sword 0
+  Count sword 0
+  Volume sword 0
+  Level sword 0
+  //MyFile byte[] 'C:\Users\Magdalene Benson\Desktop\at.rmd'
+dseg ends
+
+#define SPEED       65
+#define WAIT_TIME   4000
+#define THRESHOLD   50
+#define mtrspeed    45
+#define mtrspeed2   25
+#define TURN        360
+#define ultra       70
+
+
+thread main
+
+precedes sense_touch, sense_clap, sense_wave
+
+
+       //turn on robot, robot moves forward
+       
+       // robot senses touch,
+       // rotates 180 degrees and continues forward
+       
+       // robot senses CLAP, turns on light sensor
+       // and begins searching for/following the track
+       
+       // after robot has made it around the track...
+       
+       // wave hand in fron of ultrasonic sensor,
+       // robot rotates 180 degrees, moves forward fro a bit,
+       // plays music/ sound byte
+       
+endt
+
+//Sound Sensor Thread
+//Sensor #4
+thread sense_clap
+  SetSensorType(IN_4, IN_TYPE_SOUND_DB)
+  SetSensorMode(IN_4, IN_MODE_PERIODCOUNTER)
+  ResetSensor(IN_4)
+
+Forever:
+  ClearSensor(IN_4)
+CheckCount:
+
+  ReadSensor(IN_4, Count)
+  brtst EQ, CheckCount, Count
+  OnRev(OUT_BC,SPEED)
+  wait 500
+  ReadSensor(IN_4, Count)
+  brcmp EQ, StopIt, Count, 1
+  jmp Forever
+StopIt:
+  Off(OUT_BC)
+
+
+  
+//Light Sensor #3 Start
+ SetSensorLight(IN_3)
+ OnFwd(OUT_BC,mtrspeed)
+CheckSensor:
+ ReadSensor(IN_3,Level)
+ brcmp LT, CheckSensor, Level, THRESHOLD
+ OnRev(OUT_B,mtrspeed)
+ OnFwd(OUT_C,mtrspeed2)
+FindLine:
+ ReadSensor(IN_3,Level)
+ brcmp GTEQ, FindLine, Level, THRESHOLD
+ OnFwd(OUT_BC,mtrspeed)
+ jmp CheckSensor
+endt
+
+//Ultrasonic Sensor Thread
+//Sensor #2
+thread sense_wave
+
+// turn on ultrasonic sensor
+   //SetSensorUltrasonic(IN_2)
+
+/* wait to see hand wave
+   Forever:
+       ReadSensorUS(IN_2, Distance)
+       brcmp GT, Forever, Distance, ultra
+       //ClearSensor(IN_3)
+       Off(OUT_BC)
+       wait 500
+       RotateMotor(OUT_C, 180, SPEED)
+       RotateMotor(OUT_B, -180, SPEED)
+       OnFwd(OUT_BC,SPEED)
+       wait 500
+       Off(OUT_BC)
+
+       
+
+Forever:
+ ReadSensorUS(IN_2, Distance)
+ brcmp GT, Forever, Distance, 30
+ Off(OUT_B)
+ wait 200
+ OnFwd(OUT_BC,100)
+ jmp Forever
+       */
+endt
+
+//Touch Sensor Thread
+//Sensor #1
+thread sense_touch
+
+  SetSensorType(IN_1,IN_TYPE_SWITCH)
+  SetSensorMode(IN_1,IN_MODE_BOOLEAN)
+  ResetSensor(IN_1)
+  OnFwd(OUT_BC,100)
+
+CheckSensor:
+  ReadSensor(IN_1,Switch)
+  brtst EQ, CheckSensor, Switch
+  OnFwd(OUT_C, SPEED);
+  wait 1500
+  OnFwd(OUT_BC,SPEED)
+  jmp CheckSensor
+
+   endt     // end touch thread
+          
+       

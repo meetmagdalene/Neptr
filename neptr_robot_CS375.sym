@@ -1,0 +1,24 @@
+#SYMBOLS
+Index	Identifier	Type	Flag	Data	Size	RefCount
+0	__constVal4	2	0	0	1	1
+1	__constVal0	2	1	1	1	1
+2	__PlayFileTmp	8	0	4	12	4
+3	__PlayFileTmp.Result	2	1	4	1	4
+4	__PlayFileTmp.Filename	7	0	6	4	4
+5	__PlayFileTmp.Filename.Filename_type	1	0	0	1	0
+6	__PlayFileTmp.Loop	1	1	8	1	4
+7	__PlayFileTmp.Volume	1	1	9	1	4
+8	MyFile	7	0	10	4	1
+9	MyFile.MyFile_type	1	0	0	1	0
+#SOURCES
+Clump	Line	PC	Source
+0	21	0	#pragma macro 6
+0	21	0		mov __PlayFileTmp.Filename, MyFile
+0	21	2		mov __PlayFileTmp.Volume, __constVal4
+0	21	4		mov __PlayFileTmp.Loop, __constVal0
+0	21	6		syscall 9, __PlayFileTmp
+0	21	9	#line 21 "C:\Users\MAGDAL~1\AppData\Local\Temp\temp.nbc"
+0	36	9		exit -1, -1
+#CLUMPS
+Clump	Name	Offset	File
+0	main	0	C:\Users\MAGDAL~1\AppData\Local\Temp\temp.nbc
