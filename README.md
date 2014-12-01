@@ -1,7 +1,7 @@
 Neptr
 =====
 
-Neptr, my LEGO NXT Robot for CS375.
+Neptr, our LEGO NXT Robot for CS375 at Winona State University - Rochester. Fall 2014.
 
 Contributors
 ============
