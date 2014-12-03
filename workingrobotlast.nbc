@@ -5,135 +5,114 @@
    Assignment:    NXT Robot Final Project
 */
 
-#define SPEED      70
-#define MOVE_TIME  1000
-#define THRESHOLD   65
-#define mtrspeed    45
-#define mtrspeed2   25
-#define ultra       70
+// Define Constants
 
+#define SPEED      50
+#define MOVE_TIME  1000
+#define THRESHOLD   55
+#define mtrspeed    35
+#define mtrspeed2   25
+#define ultra       60
 
 dseg segment
   Switch sword 0
   Sound sword 0
   Level sword 0
-  Distance sword 50
+  Distance sword 0
   MyFile byte[] 'at.rmd'
 dseg ends
 
+/***************************************************************************/
 
 thread main
-   precedes sense_touch    // begin sense_touch thread
+
+precedes sense_touch                 //Start thread sense_touch
+
 endt
-// End Main
-//--------------------------------------------------------------
 
+/****************************************************************************/
 
-
-/*
-   Thread: Sense_Touch
-   Description: Listens for touch and sound.
-*/
 thread sense_touch
 
-  SetSensorTouch(IN_1)    // touch sensor connected to IN_1
-  SetSensorSound(IN_4)    // sound sensor connected to IN_4
-  OnFwd(OUT_BC,SPEED)     // move robot forward
+   SetSensorTouch(IN_1)              // touch sensor connected to IN_1
+   SetSensorSound(IN_4)              // sound sensor connected to IN_4
+   OnFwd(OUT_BC,SPEED)               // move forward
 
-// Wait for Touch   
-  CheckSensor:
+CheckSensor:
+   ReadSensor(IN_4, Sound)            // reads current sounds value
+   brcmp GT, LightOn, Sound, 50       // jump to LightOn When Sound > 50
+   ReadSensor(IN_1,Switch)            // reads current value of sensor (0/1)
+   brtst EQ, CheckSensor, Switch      // branch to CheckSensor if Switch = 0
+                                      // exit the loop when Switch = 1
+
+   OnRev(OUT_BC,SPEED)                // move backward
+   wait MOVE_TIME                     // wait
+   OnFwd(OUT_B,SPEED)                 // turn
+   wait MOVE_TIME                     // wait
+   OnFwd(OUT_BC,SPEED)                // move forward
+   jmp CheckSensor                    // loop to CheckSensor
   
-    ReadSensor(IN_4, Sound)        // waits for sound (clap)
-    brcmp GT, LightOn, Sound, 50   // if clap is heard, exit to LightOn branch
-    
-    ReadSensor(IN_1, Switch)       // reads current value of sensor (0/1)
-    brtst EQ, CheckSensor, Switch  // branch to CheckSensor if Switch = 0
-                                   // i.e., exit the loop when Switch = 1
-
-// Touch Sensed, Do This
-
-   OnRev(OUT_BC,SPEED)      // move backward
-   wait MOVE_TIME
-   OnFwd(OUT_B,SPEED)       // turn
-   wait MOVE_TIME
-   OnFwd(OUT_BC,SPEED)      // move forward
-   jmp CheckSensor          // loop to CheckSensor
-  
- LightOn:
-   precedes sense_track, sense_ultra    // begins ultrasonic and light thread
+LightOn:
+    precedes sense_clap, sense_ultra  // Start threads sense_clap, sense_ultra
 
 endt
-// End Sense_Touch
-//-------------------------------------------------------
 
+/****************************************************************************/
 
-/*
-   Thread: Sense_Track
-   Description: Thread begins when clap is heard, 
-                looks for track and waits for ultrusonic sensor trip.
-*/
-thread sense_track
-   
-   // TODO: IS this code necessary? It's using the same in as SetLightSensor line below...
-   SetSensorType(IN_3, IN_TYPE_SOUND_DB)
-   SetSensorMode(IN_3, IN_MODE_PERIODCOUNTER)
-   ResetSensor(IN_3)
-   // end code block...
+thread sense_clap
 
-   SetSensorLight(IN_3)       // turn on light sensor
-   OnFwd(OUT_BC,mtrspeed)     // more foreward
-   
-   // Looking for the line
-   CheckSensor:
-      ReadSensor(IN_3,Level)
-      brcmp LT, CheckSensor, Level, THRESHOLD
-      OnRev(OUT_B,mtrspeed)
-      OnFwd(OUT_C,mtrspeed2)
-      
-   // Staying on the line   
-   FindLine:
-      ReadSensor(IN_3,Level)
-      brcmp GTEQ, FindLine, Level, THRESHOLD
-      OnFwd(OUT_BC,mtrspeed)
-      jmp CheckSensor
-      
+// sound sensor connected to IN_3
+SetSensorType(IN_3, IN_TYPE_SOUND_DB)
+SetSensorMode(IN_3, IN_MODE_PERIODCOUNTER)
+ResetSensor(IN_3)
+
+//Light Sensor #3 Start
+ SetSensorLight(IN_3)            // Light Sensor Connected to IN_3
+ OnFwd(OUT_BC,mtrspeed)          // Move Forward
+ 
+CheckSensor:
+ ReadSensor(IN_3,Level)          // reads current light value
+ brcmp LT, CheckSensor, Level, THRESHOLD
+                                 // Jump to Checksensor when level < Threshold
+OnRev(OUT_B,mtrspeed)           // Turn Motor B Reverse
+OnFwd(OUT_C,mtrspeed2)          // Turn Motor C Forward
+//RotateMotor(OUT_C, 45, SPEED)
+//RotateMotor(OUT_B, 90, SPEED)
+FindLine:
+ ReadSensor(IN_3,Level)          // reads current light value
+ brcmp GTEQ, FindLine, Level, THRESHOLD
+                                 // jump to FindLine when Level >= Level
+ OnFwd(OUT_BC,mtrspeed)          // move forward
+ jmp CheckSensor                 // jump to CheckSensor
+ 
 endt
-// End Sense_Clap
-//------------------------------------------------
 
+/****************************************************************************/
 
-
-/*
-   Thread: Sense_Ultra
-   Description: Turns on ultrasonic sensor and waits for trip.
-*/
 thread sense_ultra
 
-   // TODO: Finalize Ultrasonic Thread and get music to play
-   //
-  SetSensorUltrasonic(IN_2)      // turn on ultrasonic
+//Ultrasonic Sensor #2 Start
+  SetSensorUltrasonic(IN_2)      // Ultrasonic Sensor connected to IN_2
   OnFwd(OUT_BC,100)              // move forward
   wait 2000                      // wait 2 seconds
 
-   Forever:
-      ReadSensorUS(IN_2, Distance)
-      brcmp GT, StopIt, Distance, 0
-      Off(OUT_B)
-      wait 500
-      OnFwd(OUT_BC,100)
-      jmp Forever
-      
-   StopIt:
-      Off(OUT_BC)
-      wait 1000
-      OnRev(OUT_B,mtrspeed)
-      OnFwd(OUT_C,mtrspeed2)
-      wait 500
-      OnFwd(OUT_BC,SPEED)
-      wait 500
-      Off(OUT_BC)
-      PlayFile(MyFile)
-      wait 10000  
+Forever:
+  ReadSensorUS(IN_2, Distance)   // read ultrasonic sensor distance
+  brcmp GT, StopIt, Distance, ultra  // Jump to StopIt when Distance > ultra
+ // Off(OUT_B)                     // Turn off Motor B
+//  wait 500                       // Wait 500 milliseconds
+ // OnFwd(OUT_BC,SPEED)              // move forward
+  jmp Forever                    // jump to Forever
+StopIt:
+   Off(OUT_BC)                   // Turn motors off
+   wait 1000                     // Wait 1 second
+   OnRev(OUT_C,mtrspeed)         // Turn Motor B Reverse
+   OnFwd(OUT_B,mtrspeed2)        // Turn Motor C Forward
+   wait 3000                     // Wait 500 milliseconds
+   OnFwd(OUT_BC,SPEED)           // Move Forward
+   wait 2000                     // Wait 500 milliseconds
+   Off(OUT_BC)                   // Turn motors off
+   PlayFile(MyFile)              // Play MyFile Sound
+   wait 15000                    // Wait 10 Seconds
    
 endt
-// End Sense_Ultra
